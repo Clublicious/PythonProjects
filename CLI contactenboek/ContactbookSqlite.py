@@ -1,7 +1,7 @@
 import sqlite3
 import pandas
 
-sqlite3.Cursor
+
 
 db = sqlite3.connect("contactbook.db")
 cursor = db.cursor()
@@ -18,7 +18,10 @@ def adresboek():
         if keuze == "bekijken" or keuze == "b":
             contacts = cursor.execute('select * from Contacten')
             df = pandas.DataFrame(contacts, columns=["ID", "Naam", "Leeftijd", "Straat", "Email"])
-            print(df)
+            if df.empty:
+                print("Geen contacten aanwezig")
+            else:
+                print(df)
             # for i in cursor:
             #     print(i)
         elif keuze == 'aanpassen' or keuze == 'a':
@@ -34,37 +37,42 @@ def adresboek():
 def change_inputs():
     contacts = cursor.execute('select * from Contacten')
     df = pandas.DataFrame(contacts, columns=["ID", "Naam", "Leeftijd", "Straat", "Email"])
-    print(df)
-    identiteit = input("Welk id wil je aanpassen?: ")
-    aanpassing = input("Wat wil je doen? [D]elete/[E]dit : ").lower()
-    if aanpassing == "edit" or aanpassing == 'e':
-        veranderen = input('Wat wens je te wijzigen? [N]aam/ [L]eeftijd /[A]dres / [E]mail?: ').lower()
-        if veranderen == 'l' or veranderen == 'leeftijd':
-            leeftijd_aanpassing = input("Leeftijd?: ")
-            command = "UPDATE Contacten SET leeftijd = (?) WHERE ID = (?)"
-            togheter = (leeftijd_aanpassing, identiteit)
-            cursor.execute(command, togheter)
-            db.commit()
-        if veranderen == 'n' or veranderen == 'naam':
-            naam_aanpassing = input("Naam?: ")
-            command_naam = 'UPDATE Contacten SET naam = (?) WHERE ID = (?)'
-            togheter_naam = (naam_aanpassing, identiteit)
-            cursor.execute(command_naam, togheter_naam)
-            db.commit()            
-        if veranderen == 'a' or veranderen == 'adres':
-            adres_aanpassing = input("Adres?: ")
-            command_adres = 'UPDATE Contacten SET adres = (?) WHERE ID = (?)'
-            togheter_adres = (adres_aanpassing, identiteit)
-            cursor.execute(command_adres, togheter_adres)
-            db.commit()            
-        if veranderen == 'e' or veranderen == 'email':
-            email_aanpassing = input("Email?: ")
-            command_email = 'UPDATE Contacten SET email = (?) WHERE ID = (?)'
-            togheter_email = (email_aanpassing, identiteit)
-            cursor.execute(command_email, togheter_email)
-            db.commit()
+    if df.empty:
+        print("Geen contacten aanwezig")
     else:
-        delete_user(identiteit)
+        print(df)
+        identiteit = input("Welk id wil je aanpassen?: ")
+        aanpassing = input("Wat wil je doen? [D]elete/[E]dit : ").lower()
+        if aanpassing == "edit" or aanpassing == 'e':
+            veranderen = input('Wat wens je te wijzigen? [N]aam/ [L]eeftijd /[A]dres / [E]mail?: ').lower()
+            if veranderen == 'l' or veranderen == 'leeftijd':
+                leeftijd_aanpassing = input("Leeftijd?: ")
+                command = "UPDATE Contacten SET leeftijd = (?) WHERE ID = (?)"
+                togheter = (leeftijd_aanpassing, identiteit)
+                cursor.execute(command, togheter)
+                db.commit()
+            if veranderen == 'n' or veranderen == 'naam':
+                naam_aanpassing = input("Naam?: ")
+                command_naam = 'UPDATE Contacten SET naam = (?) WHERE ID = (?)'
+                togheter_naam = (naam_aanpassing, identiteit)
+                cursor.execute(command_naam, togheter_naam)
+                db.commit()            
+            if veranderen == 'a' or veranderen == 'adres':
+                adres_aanpassing = input("Adres?: ")
+                command_adres = 'UPDATE Contacten SET adres = (?) WHERE ID = (?)'
+                togheter_adres = (adres_aanpassing, identiteit)
+                cursor.execute(command_adres, togheter_adres)
+                db.commit()            
+            if veranderen == 'e' or veranderen == 'email':
+                email_aanpassing = input("Email?: ")
+                command_email = 'UPDATE Contacten SET email = (?) WHERE ID = (?)'
+                togheter_email = (email_aanpassing, identiteit)
+                cursor.execute(command_email, togheter_email)
+                db.commit()
+        elif aanpassing == "delete" or aanpassing == 'd':
+            delete_user(identiteit)
+        else:
+            pass
 
 
 def delete_user(x):
